@@ -15,7 +15,6 @@ const config = {
 				enabled: true,
 				type: 'module'
 			},
-			mode: 'development',
 			scope: '/',
 			strategies: 'generateSW',
 			manifest: {
