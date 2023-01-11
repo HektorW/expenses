@@ -1,38 +1,122 @@
-# create-svelte
+# Expenses app
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Features
 
-## Creating a project
+- Add expense
+  - Amount
+    - Calculation
+  - Title
+  - By person
+  - Date
+  - Items?
+  - Image?
+  - Place?
+  - For persons?
+- List expenses
+- See standing
+- See person details
+  - Expenses
+  - Payments
+  - Standing
+- See expense details
+- Add payment
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Requirements
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- Offline capable
+  - Synch when able to
+- Free hosting
 
-# create a new project in my-app
-npm create svelte@latest my-app
+## UI Requirements
+
+- Easy and quick to add expense
+  - Sensible default values
+- Highlight unsynched items
+
+## State
+
+```ts
+type AppState = {
+	expenses: Expense[]
+	payments: Payment[]
+	persons: Person[]
+	lastExpensePersonId?: PersonId | null
+	lastPaymentPersonId?: PersonId | null
+}
+
+type PersonId = string
+type ExpenseClientId = string
+type ExpenseServerId = string
+type PaymentClientId = string
+type PaymentServerId = string
+type DateString = string
+type ImageBase64 = string
+type ColorString = string
+
+type Person = {
+	id: PersonId
+	name: string
+	color: ColorString
+}
+
+type Expense = {
+	clientId: ExpenseClientId
+	serverId: ExpenseServerId | null
+	calculation?: string
+	expenseItems: ExpenseItem[]
+	currency: string
+	title: string
+	date: DateString
+	image: ImageBase64 | null
+	byPerson: PersonId
+	forPersons: PersonId[]
+}
+
+type ExpenseItem = {
+	id: string
+	title: string
+	amount: number
+	forPersons: PersonId
+}
+
+type Payment = {
+	clientId: PaymentClientId
+	serverId: PaymentServerId | null
+	amount: number
+	currency: string
+	date: DateString
+	byPerson: PersonId
+	toPerson: PersonId
+}
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```ts
+function createNewExpense(byPerson: PersonId): Expense {
+	return {
+		clientId: generateClientId(),
+		serverId: null,
+		expenseItems: [],
+		title: '',
+		currency: 'SEK',
+		date: getDateString(new Date()),
+		image: null,
+		byPerson,
+		forPersons: []
+	}
+}
 ```
 
-## Building
+```ts
+function getExpenseTotal(expense: Expense) {
+	return expense.expenseItems.reduce((total, item) => total + item.amount, 0)
+}
 
-To create a production version of your app:
+function getDateString(date: Date) {
+	return date.toUTCString()
+}
 
-```bash
-npm run build
+function generateClientId() {
+	const randomStr = `${Math.random()}`.substring(2)
+	return `${Date.now()}-${randomStr}`
+}
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

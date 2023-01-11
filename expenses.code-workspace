@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"name": "Expenses",
+			"path": "."
+		}
+	],
+
+	"settings": {
+		"editor.formatOnSave": true,
+
+		"[prisma]": {
+			"editor.defaultFormatter": "Prisma.prisma"
+		}
+	}
+}

@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  color String
+
+  expenseItemIds String[]      @db.ObjectId
+  expenseItems   ExpenseItem[] @relation(fields: [expenseItemIds], references: [id])
+
+  expenses Expense[]
+
+  paymentsMade     Payment[] @relation("PaymentsMade")
+  paymentsReceived Payment[] @relation("PaymentsReceived")
+}
+
+model Expense {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String
+
+  byPerson   Person @relation(fields: [byPersonId], references: [id])
+  byPersonId String @db.ObjectId
+
+  title       String?
+  date        DateTime
+  imageBase64 String?
+
+  expenseItems ExpenseItem[]
+  calculation  String?
+  currency     String?
+}
+
+model ExpenseItem {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  title  String
+  amount Float
+
+  forPersonIds String[] @db.ObjectId
+  forPersons   Person[] @relation(fields: [forPersonIds], references: [id])
+
+  Expense   Expense? @relation(fields: [expenseId], references: [id])
+  expenseId String?  @db.ObjectId
+}
+
+model Payment {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String
+
+  amount   Float
+  currency String
+  date     DateTime
+
+  byPerson   Person @relation("PaymentsMade", fields: [byPersonId], references: [id])
+  byPersonId String @db.ObjectId
+  toPerson   Person @relation("PaymentsReceived", fields: [toPersonId], references: [id])
+  toPersonId String @db.ObjectId
+}
