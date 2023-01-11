@@ -49,6 +49,4 @@
 			<b>No expenses yet</b>
 		</p>
 	{/if}
-
-	<a href="/expense/create">Create new expense</a>
 </section>
