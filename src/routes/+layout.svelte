@@ -1,6 +1,17 @@
-<script>
+<script lang="ts">
+	import { pwaInfo } from 'virtual:pwa-info'
 	import CreateExpenseFab from '$lib/components/CreateExpenseFab.svelte'
+
+	$: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
+
+	$: {
+		console.log({ webManifest })
+	}
 </script>
+
+<svelte:head>
+	{@html webManifest}
+</svelte:head>
 
 <main>
 	<slot />
@@ -14,8 +25,8 @@
 	}
 
 	:global(body) {
-		background-color: antiquewhite;
-		color: #222;
+		background-color: hsl(34, 78%, 91%);
+		color: hsl(0, 0%, 13%);
 	}
 
 	:global(a) {

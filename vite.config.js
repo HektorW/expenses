@@ -3,7 +3,36 @@ import { SvelteKitPWA } from '@vite-pwa/sveltekit'
 
 /** @type {import('vite').UserConfig} */
 const config = {
-	plugins: [sveltekit(), SvelteKitPWA()],
+	logLevel: 'info',
+	build: {
+		minify: false
+	},
+	plugins: [
+		sveltekit(),
+		SvelteKitPWA({
+			registerType: 'autoUpdate',
+			injectRegister: 'inline',
+			devOptions: {
+				enabled: true,
+				type: 'module'
+			},
+			mode: 'development',
+			scope: '/',
+			strategies: 'generateSW',
+			manifest: {
+				name: 'Westrup Wallin - Pengar',
+				short_name: 'Pengar',
+				display: 'standalone',
+				icons: [
+					{
+						src: '/money-bill-wave-alt.png',
+						sizes: '500x500',
+						type: 'image/png'
+					}
+				]
+			}
+		})
+	],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	}
