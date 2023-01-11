@@ -10,8 +10,7 @@ const config = {
 	plugins: [
 		sveltekit(),
 		SvelteKitPWA({
-			registerType: 'autoUpdate',
-			injectRegister: 'inline',
+			injectRegister: false,
 			devOptions: {
 				enabled: true,
 				type: 'module'

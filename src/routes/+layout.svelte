@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { pwaInfo } from 'virtual:pwa-info'
+	import { registerSW } from 'virtual:pwa-register'
 	import CreateExpenseFab from '$lib/components/CreateExpenseFab.svelte'
+
+	if (typeof navigator !== 'undefined') {
+		registerSW({ immediate: true })
+	}
 
 	$: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
 
@@ -25,7 +30,7 @@
 	}
 
 	:global(body) {
-		background-color: hsl(34, 78%, 91%);
+		background-color: #faebd7;
 		color: hsl(0, 0%, 13%);
 	}
 
