@@ -4,25 +4,9 @@ import { attempt, hasFailed } from '$lib/utils/ts-failure'
 import type { Actions, PageServerLoad } from './$types'
 import { parseFormDataString } from '$lib/utils/formDataUtils'
 
-export const load: PageServerLoad = ({ params }) => {
-	return usePrismaClient(async (prisma) => {
-		const expenseId = params.id
-
-		const expense = await attempt(
-			prisma.expense.findFirst({
-				where: { id: expenseId },
-				include: { byPerson: true, expenseItems: true }
-			})
-		)
-
-		if (hasFailed(expense) || !expense) {
-			throw error(404, 'Could not find expense')
-		}
-
-		return {
-			expense
-		}
-	})
+export const load: PageServerLoad = async ({ parent }) => {
+	const layoutData = await parent()
+	return layoutData
 }
 
 export const actions: Actions = {

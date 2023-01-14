@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Fab from '$lib/components/Fab.svelte'
 	import ExpenseTotal from '$lib/components/ExpenseTotal.svelte'
 	import Money from '$lib/components/Money.svelte'
 	import PersonIcon from '$lib/components/PersonIcon.svelte'
@@ -10,15 +11,17 @@
 	export let data: PageData
 </script>
 
-<h1>Westrup Wallin - Expenses</h1>
+<p>Westrup Wallin</p>
+<h1>Pengar å sånt</h1>
 
 <section>
-	<h2>Persons</h2>
+	<h2>Balans</h2>
+
 	<ul>
 		{#each data.persons as person}
 			<li>
 				<PersonIcon {person} />
-				<a href={`/person/${person.id}`}>{person.name}</a>, Total:
+				<a href={`/person/${person.id}`}>{person.name}</a>, Totalt:
 				<b><Money amount={getPersonStanding(data.expenses, person.id)} /></b>
 			</li>
 		{/each}
@@ -26,7 +29,7 @@
 </section>
 
 <section>
-	<h2>Expenses</h2>
+	<h2>Alla utlägg</h2>
 
 	{#if data.expenses.length > 0}
 		<ul>
@@ -46,7 +49,16 @@
 		</ul>
 	{:else}
 		<p>
-			<b>No expenses yet</b>
+			<b>Ingenting här än</b>
 		</p>
 	{/if}
 </section>
+
+<Fab href="/expense/create">Nytt<br />Utlägg</Fab>
+
+<style lang="scss">
+	p,
+	h1 {
+		margin: 0;
+	}
+</style>

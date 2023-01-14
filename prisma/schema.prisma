@@ -22,6 +22,7 @@ model Person {
 
   paymentsMade     Payment[] @relation("PaymentsMade")
   paymentsReceived Payment[] @relation("PaymentsReceived")
+  Todo             Todo[]
 }
 
 model Expense {
@@ -64,4 +65,16 @@ model Payment {
   byPersonId String @db.ObjectId
   toPerson   Person @relation("PaymentsReceived", fields: [toPersonId], references: [id])
   toPersonId String @db.ObjectId
+}
+
+model Todo {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  clientId String
+
+  title        String
+  finishedDate DateTime?
+  createdDate  DateTime
+
+  byPerson   Person @relation(fields: [byPersonId], references: [id])
+  byPersonId String @db.ObjectId
 }

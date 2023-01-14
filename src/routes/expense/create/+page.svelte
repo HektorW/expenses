@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
-	import PersonIcon from '$lib/components/PersonIcon.svelte'
+	import EditExpenseItem from '$lib/components/EditExpenseItem.svelte'
+	import PersonPicker from '$lib/components/PersonPicker.svelte'
 	import { appStore } from '$lib/stores/appStore'
 	import type { PartialNewExpenseItem } from '$lib/types/app.types'
 	import { getHtmlDateString } from '$lib/utils/dateUtils'
@@ -14,11 +15,8 @@
 		fcnDate,
 		fcnImage,
 		fcnClientId,
-		fcnItemClientId,
-		getFcnItemTitle,
-		getFcnItemAmount,
-		getFcnItemForPersonIds
-	} from './formControlNames'
+		fcnTitle
+	} from '../../../lib/utils/formControlNames'
 
 	export let data: PageData
 
@@ -34,115 +32,141 @@
 
 		expenses = expenses
 	}
+
+	function addPreviewExpenseItem() {
+		expenses.push(createNewExpenseItem(data.persons, expenses))
+
+		expenses = expenses
+	}
 </script>
 
 <svelte:head>
-	<title>Create new expense</title>
+	<title>Pengar - Nytt utlägg</title>
 </svelte:head>
 
-<a href="/">Back to home</a>
+<a href="/">← Tillbaka till start</a>
 
-<h1>Create new expense</h1>
+<h1>Nytt utlägg</h1>
 
-<form method="post" use:enhance>
+<form method="post" autocomplete="off" use:enhance>
 	<input name={fcnClientId} type="hidden" value={clientId} />
 
+	<label class="title">
+		Titel <span>(valfritt)</span>
+		<input
+			name={fcnTitle}
+			type="text"
+			placeholder="Coop, eller nåt..."
+			data-lpignore="true"
+		/>
+	</label>
+
+	<PersonPicker
+		title="Betalat av"
+		name={fcnByPersonId}
+		persons={data.persons}
+		bind:group={byPersonId}
+	/>
+
+	<div class="expense-items">
+		<h2>
+			<span>Namn</span>
+			<span>Pris</span>
+		</h2>
+
+		{#each expenses as expenseItem, index}
+			{@const isPreview = index > 0 && index === expenses.length - 1}
+			{@const shouldCreateNewPreviewOnInteraction =
+				isPreview || (index === 0 && expenses.length === 1)}
+
+			<EditExpenseItem
+				{expenseItem}
+				{isPreview}
+				persons={data.persons}
+				on:interaction={shouldCreateNewPreviewOnInteraction
+					? addPreviewExpenseItem
+					: undefined}
+			/>
+		{/each}
+	</div>
+
 	<fieldset>
-		<legend>Meta</legend>
-		<label for={fcnDate}>Date</label>
-		<input
-			id={fcnDate}
-			name={fcnDate}
-			type="datetime-local"
-			required
-			bind:value={date}
-		/>
+		<div>
+			<label for={fcnDate}>Datum</label>
+			<input
+				id={fcnDate}
+				name={fcnDate}
+				type="datetime-local"
+				required
+				bind:value={date}
+			/>
+		</div>
 
-		<label for={fcnImage}>Image</label>
-		<input
-			id={fcnImage}
-			name={fcnImage}
-			type="file"
-			accept="image/*"
-			capture="environment"
-		/>
-
-		<fieldset>
-			<legend>By</legend>
-
-			{#each data.persons as person}
-				<label>
-					<input
-						name={fcnByPersonId}
-						type="radio"
-						value={person.id}
-						bind:group={byPersonId}
-					/>
-					<PersonIcon {person} />
-					{person.name}
-				</label>
-			{/each}
-		</fieldset>
+		<div>
+			<label for={fcnImage}>Bild</label>
+			<input
+				id={fcnImage}
+				name={fcnImage}
+				type="file"
+				accept="image/*"
+				capture="environment"
+			/>
+		</div>
 	</fieldset>
 
-	{#each expenses as expense}
-		{@const fcnItemTitle = getFcnItemTitle(expense.clientId)}
-		{@const fcnItemAmount = getFcnItemAmount(expense.clientId)}
-		{@const fcnItemForPersonIds = getFcnItemForPersonIds(expense.clientId)}
-
-		<fieldset>
-			<input
-				name={fcnItemClientId}
-				type="hidden"
-				bind:value={expense.clientId}
-			/>
-
-			<legend>{expense.title ?? ''}</legend>
-
-			<label for={fcnItemTitle}>Title</label>
-			<input
-				id={fcnItemTitle}
-				name={fcnItemTitle}
-				type="text"
-				required
-				bind:value={expense.title}
-			/>
-
-			<label for={fcnItemAmount}>Amount</label>
-			<input
-				id={fcnItemAmount}
-				name={fcnItemAmount}
-				type="number"
-				placeholder="100.00"
-				min="0"
-				step="1"
-				required
-				bind:value={expense.amount}
-			/>
-
-			<fieldset>
-				<legend>For</legend>
-
-				{#each data.persons as person}
-					<label>
-						<input
-							name={fcnItemForPersonIds}
-							type="checkbox"
-							value={person.id}
-							checked
-							bind:group={expense.forPersonIds}
-						/>
-						<PersonIcon {person} />
-						{person.name}
-					</label>
-				{/each}
-			</fieldset>
-		</fieldset>
-	{/each}
-
-	<button type="button" on:click={onAddExpenseItemClick}
-		>Add expense item</button
-	>
-
-	<button type="submit">Save</button>
+	<button type="submit">Lägg till</button>
 </form>
+
+<style lang="scss">
+	h1 {
+		font-size: 1rem;
+	}
+
+	.title {
+		display: block;
+		margin-block: 1rem;
+
+		span {
+			font-size: 0.75em;
+		}
+
+		input {
+			background: none;
+			border: 0;
+			border-bottom: 1px solid currentColor;
+			padding: 0.5em;
+			width: 100%;
+
+			&:focus-visible {
+				border-bottom-color: var(--color--focus);
+				box-shadow: 0 1px var(--color--focus);
+				outline: none;
+			}
+		}
+	}
+
+	.expense-items {
+		margin-block: 1rem;
+
+		h2 {
+			display: grid;
+			font-size: 0.5rem;
+			grid-template-columns: 1fr 1fr;
+			margin: 0;
+		}
+	}
+
+	input[type='file'] {
+		width: 100%;
+	}
+
+	button[type='submit'] {
+		background-color: var(--color--primary);
+		border: 0;
+		border-radius: 8px;
+		font-size: inherit;
+		margin-top: 1rem;
+		padding: 0.5em;
+		width: 100%;
+	}
+</style>

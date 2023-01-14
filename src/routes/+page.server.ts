@@ -6,16 +6,22 @@ export const load: PageServerLoad = async () => {
 
 	await prisma.$connect()
 
-	const persons = await prisma.person.findMany()
-	const expenses = await prisma.expense.findMany({
-		orderBy: { date: 'desc' },
-		include: { expenseItems: true }
-	})
+	const [persons, expenses, todos] = await Promise.all([
+		prisma.person.findMany(),
+
+		prisma.expense.findMany({
+			orderBy: { date: 'desc' },
+			include: { expenseItems: true }
+		}),
+
+		prisma.todo.findMany()
+	])
 
 	await prisma.$disconnect()
 
 	return {
 		persons,
-		expenses
+		expenses,
+		todos
 	}
 }

@@ -10,7 +10,7 @@ import {
 	getFcnItemAmount,
 	getFcnItemForPersonIds,
 	getFcnItemTitle
-} from './formControlNames'
+} from '../../../lib/utils/formControlNames'
 
 export function parseFormDataExpenseItems(
 	formData: FormData

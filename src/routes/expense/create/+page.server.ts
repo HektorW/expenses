@@ -4,7 +4,12 @@ import { getPrismaClient } from '$lib/db/prisma'
 import { getDateString } from '$lib/utils/dateUtils'
 import { parseFormDataString } from '$lib/utils/formDataUtils'
 import type { PageServerLoad } from './$types'
-import { fcnByPersonId, fcnClientId, fcnDate } from './formControlNames'
+import {
+	fcnByPersonId,
+	fcnClientId,
+	fcnDate,
+	fcnTitle
+} from '../../../lib/utils/formControlNames'
 import { parseFormDataExpenseItems } from './parseFormData'
 
 export const load: PageServerLoad = async () => {
@@ -25,6 +30,7 @@ export const actions: Actions = {
 		const data = await event.request.formData()
 
 		const clientId = parseFormDataString(data, fcnClientId)
+		const title = parseFormDataString(data, fcnTitle)
 		const byPersonId = parseFormDataString(data, fcnByPersonId)
 		const dateStr =
 			parseFormDataString(data, fcnDate) ?? getDateString(new Date())
@@ -47,6 +53,7 @@ export const actions: Actions = {
 		const result = await prisma.expense.create({
 			data: {
 				clientId,
+				title,
 				byPersonId,
 				date: new Date(dateStr),
 				expenseItems: {

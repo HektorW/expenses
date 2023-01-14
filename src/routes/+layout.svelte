@@ -1,41 +1,77 @@
 <script lang="ts">
 	import { pwaInfo } from 'virtual:pwa-info'
 	import { registerSW } from 'virtual:pwa-register'
-	import CreateExpenseFab from '$lib/components/CreateExpenseFab.svelte'
 
 	if (typeof navigator !== 'undefined') {
 		registerSW({ immediate: true })
 	}
 
 	$: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
-
-	$: {
-		console.log({ webManifest })
-	}
 </script>
 
 <svelte:head>
 	{@html webManifest}
+
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link
+		rel="preconnect"
+		href="https://fonts.gstatic.com"
+		crossorigin="anonymous"
+	/>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap"
+		rel="stylesheet"
+	/>
 </svelte:head>
 
 <main>
 	<slot />
 </main>
 
-<CreateExpenseFab />
-
 <style lang="scss">
+	:root {
+		--color--background: #fff2de;
+		--color--text: #424242;
+		--color--primary: #ffc1a0;
+		--color--secondary: #b5d3e3;
+		--color--focus: var(--color--primary);
+		--color--selected: var(--color--text);
+	}
+
 	:global(html) {
-		font-size: 175%;
+		box-sizing: border-box;
+		font-family: Open Sans;
+		font-size: 150%;
+	}
+
+	:global(*, *::after, *::before) {
+		box-sizing: inherit;
+
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	:global(:focus-visible) {
+		outline-color: var(--color--focus);
 	}
 
 	:global(body) {
-		background-color: #faebd7;
-		color: hsl(0, 0%, 13%);
+		background-color: #fff2de;
+		color: #424242;
+		overflow-x: hidden;
 	}
 
-	:global(a) {
+	:global(a, button, input) {
 		color: inherit;
+	}
+
+	:global(input) {
+		border-radius: 0;
+		font-size: inherit;
+	}
+
+	:global(fieldset) {
+		border: 0;
+		padding: 0;
 	}
 
 	main {

@@ -28,7 +28,9 @@ export function getExpenseTotal(expense: ExpenseWithItems) {
 }
 
 export function getExpenseTitle(expense: ExpenseWithItems) {
-	return expense.expenseItems.map((item) => item.title).join(', ')
+	return (
+		expense.title || expense.expenseItems.map((item) => item.title).join(', ')
+	)
 }
 
 export function createNewExpense(byPerson: PersonId): Expense {

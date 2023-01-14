@@ -12,7 +12,7 @@ const config = {
 		SvelteKitPWA({
 			injectRegister: false,
 			devOptions: {
-				enabled: true,
+				enabled: false,
 				type: 'module'
 			},
 			scope: '/',
