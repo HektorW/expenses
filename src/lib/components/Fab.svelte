@@ -1,8 +1,18 @@
 <script lang="ts">
+	import { goto } from '$app/navigation'
+
 	export let href: string
+	export let state: any = undefined
+
+	function onClick(event: MouseEvent) {
+		if (state) {
+			event.preventDefault()
+			goto(href, { state })
+		}
+	}
 </script>
 
-<a {href}><slot /></a>
+<a {href} on:click={onClick}><slot /></a>
 
 <style lang="scss">
 	a {

@@ -1,5 +1,7 @@
 <script lang="ts">
+	import Fab from '$lib/components/Fab.svelte'
 	import Money from '$lib/components/Money.svelte'
+	import { locale } from '$lib/constants/locale'
 	import { getExpenseTitle, getExpenseTotal } from '$lib/utils/expenseUtils'
 	import type { PageData } from './$types'
 
@@ -17,7 +19,7 @@
 	Totalt: <b><Money amount={getExpenseTotal(data.expense)} /></b>
 </p>
 <p>
-	Datum: {new Intl.DateTimeFormat('en-SE', {
+	Datum: {new Intl.DateTimeFormat(locale, {
 		dateStyle: 'full',
 		timeStyle: 'short'
 	}).format(data.expense.date)}
@@ -37,3 +39,5 @@
 
 	<button type="submit">Ta bort utlägg</button>
 </form>
+
+<Fab href="/expense/create">Nytt<br />Utlägg</Fab>

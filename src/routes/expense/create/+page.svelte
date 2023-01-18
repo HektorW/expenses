@@ -23,14 +23,21 @@
 	const clientId = generateExpenseClientId()
 
 	let date = getHtmlDateString(new Date())
-	let byPersonId = $appStore.lastExpensePersonId ?? data.persons[0]?.id
+	let byPersonId = getInitialByPersonId()
 
 	let expenses: PartialNewExpenseItem[] = [createNewExpenseItem(data.persons)]
 
-	function onAddExpenseItemClick() {
-		expenses.push(createNewExpenseItem(data.persons, expenses))
+	function getInitialByPersonId() {
+		if (
+			typeof window !== 'undefined' &&
+			window.history &&
+			window.history.state &&
+			typeof window.history.state.byPersonId === 'string'
+		) {
+			return window.history.state.byPersonId
+		}
 
-		expenses = expenses
+		return $appStore.lastExpensePersonId ?? data.persons[0]?.id
 	}
 
 	function addPreviewExpenseItem() {

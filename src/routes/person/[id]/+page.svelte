@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Fab from '$lib/components/Fab.svelte'
 	import Money from '$lib/components/Money.svelte'
 	import PersonIcon from '$lib/components/PersonIcon.svelte'
 	import { getExpenseTitle, getExpenseTotal } from '$lib/utils/expenseUtils'
@@ -31,3 +32,7 @@
 		</li>
 	{/each}
 </ul>
+
+<Fab href="/expense/create" state={{ byPersonId: data.person.id }}
+	>Nytt<br />Utlägg</Fab
+>

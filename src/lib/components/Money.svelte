@@ -1,6 +1,13 @@
 <script lang="ts">
+	import { locale } from '$lib/constants/locale'
+
 	export let amount: number
-	export let currency = 'kr'
+	export let currency = 'SEK'
+
+	const formatter = new Intl.NumberFormat(locale, {
+		style: 'currency',
+		currency
+	})
 </script>
 
-<span>{amount} {currency}</span>
+<span>{formatter.format(amount)}</span>
