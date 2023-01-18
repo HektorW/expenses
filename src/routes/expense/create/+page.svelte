@@ -7,7 +7,8 @@
 	import { getHtmlDateString } from '$lib/utils/dateUtils'
 	import {
 		createNewExpenseItem,
-		generateExpenseClientId
+		generateExpenseClientId,
+		getExpenseTotal
 	} from '$lib/utils/expenseUtils'
 	import type { PageData } from './$types'
 	import {
@@ -17,6 +18,7 @@
 		fcnClientId,
 		fcnTitle
 	} from '../../../lib/utils/formControlNames'
+	import RouteTitle from '$lib/components/RouteTitle.svelte'
 
 	export let data: PageData
 
@@ -26,6 +28,10 @@
 	let byPersonId = getInitialByPersonId()
 
 	let expenses: PartialNewExpenseItem[] = [createNewExpenseItem(data.persons)]
+
+	$: total = getExpenseTotal({
+		expenseItems: expenses
+	})
 
 	function getInitialByPersonId() {
 		if (
@@ -47,9 +53,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Pengar - Nytt utlägg</title>
-</svelte:head>
+<RouteTitle title="Nytt utlägg" />
 
 <a href="/">← Tillbaka till start</a>
 
@@ -87,7 +91,7 @@
 				isPreview || (index === 0 && expenses.length === 1)}
 
 			<EditExpenseItem
-				{expenseItem}
+				bind:expenseItem
 				{isPreview}
 				persons={data.persons}
 				on:interaction={shouldCreateNewPreviewOnInteraction
@@ -96,6 +100,8 @@
 			/>
 		{/each}
 	</div>
+
+	<h2>Totalt: {total}</h2>
 
 	<fieldset>
 		<div>

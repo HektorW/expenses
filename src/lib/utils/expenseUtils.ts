@@ -23,8 +23,14 @@ export function createNewExpenseItem(
 	}
 }
 
-export function getExpenseTotal(expense: ExpenseWithItems) {
-	return expense.expenseItems.reduce((total, item) => total + item.amount, 0)
+export function getExpenseTotal(expense: {
+	expenseItems: Array<{ amount?: number | undefined }>
+}) {
+	return expense.expenseItems.reduce(
+		(total, item) =>
+			typeof item.amount === 'number' ? total + item.amount : total,
+		0
+	)
 }
 
 export function getExpenseTitle(expense: ExpenseWithItems) {
