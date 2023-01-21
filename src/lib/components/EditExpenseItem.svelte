@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PartialNewExpenseItem, Person } from '$lib/types/app.types'
+	import type { WithTarget } from '$lib/types/utils.types'
 	import {
 		fcnItemClientId,
 		getFcnItemAmount,
@@ -19,12 +20,30 @@
 	$: fcnItemAmount = getFcnItemAmount(expenseItem.clientId)
 	$: fcnItemForPersonIds = getFcnItemForPersonIds(expenseItem.clientId)
 
+	function onAmountInput(event: WithTarget<HTMLInputElement>) {
+		expenseItem.amount = parseNumber(event.currentTarget.value)
+		expenseItem = expenseItem
+	}
+
 	function onAnyInputBlur(
 		event: FocusEvent & { currentTarget: HTMLInputElement }
 	) {
 		if (event.currentTarget.value !== '') {
 			dispatch('interaction')
 		}
+	}
+
+	function parseNumber(numberStr: string): number {
+		if (numberStr.trim() === '') {
+			return 0
+		}
+
+		let decimalFixed = numberStr.replace(',', '.')
+		if (decimalFixed[0] === '.') {
+			decimalFixed = `0${decimalFixed}`
+		}
+
+		return parseFloat(decimalFixed)
 	}
 </script>
 
@@ -38,7 +57,6 @@
 	{/if}
 
 	<div class="name">
-		<!-- <label for={fcnItemTitle}>Namn</label> -->
 		<input
 			id={fcnItemTitle}
 			name={fcnItemTitle}
@@ -53,18 +71,18 @@
 	</div>
 
 	<div class="amount">
-		<!-- <label for={fcnItemAmount}>Pris</label> -->
 		<input
+			lang="dk"
 			id={fcnItemAmount}
 			name={fcnItemAmount}
-			type="number"
+			type="text"
+			pattern="[0-9]*[,.]?[0-9]*"
 			placeholder="0"
-			min="0"
-			step="0.01"
 			autocomplete="off"
+			inputmode="decimal"
 			required={!isPreview}
 			on:blur={onAnyInputBlur}
-			bind:value={expenseItem.amount}
+			on:input={onAmountInput}
 		/>
 		<span class="amount__currency">kr</span>
 	</div>
