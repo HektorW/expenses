@@ -19,6 +19,7 @@
 		fcnTitle
 	} from '../../../lib/utils/formControlNames'
 	import RouteTitle from '$lib/components/RouteTitle.svelte'
+	import Money from '$lib/components/Money.svelte'
 
 	export let data: PageData
 
@@ -101,7 +102,7 @@
 		{/each}
 	</div>
 
-	<h2>Totalt: {total}</h2>
+	<h2>Totalt: <Money amount={total} /></h2>
 
 	<fieldset>
 		<div>
