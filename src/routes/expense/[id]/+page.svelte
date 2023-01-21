@@ -1,17 +1,13 @@
 <script lang="ts">
 	import Fab from '$lib/components/Fab.svelte'
 	import Money from '$lib/components/Money.svelte'
+	import RelativeDate from '$lib/components/RelativeDate.svelte'
 	import RouteTitle from '$lib/components/RouteTitle.svelte'
-	import { locale } from '$lib/constants/locale'
+	import { getFullDateFormatted } from '$lib/utils/dateUtils'
 	import { getExpenseTitle, getExpenseTotal } from '$lib/utils/expenseUtils'
 	import type { PageData } from './$types'
 
 	export let data: PageData
-
-	const dateFormatter = new Intl.DateTimeFormat(locale, {
-		dateStyle: 'full',
-		timeStyle: 'short'
-	})
 
 	$: title = getExpenseTitle(data.expense)
 </script>
@@ -29,7 +25,8 @@
 	Totalt: <b><Money amount={getExpenseTotal(data.expense)} /></b>
 </p>
 <p>
-	Datum: {dateFormatter.format(data.expense.date)}
+	Datum: <RelativeDate date={data.expense.date} />
+	<small>{getFullDateFormatted(data.expense.date)}</small>
 </p>
 
 {#if data.expense.expenseItems.length > 1}
@@ -48,3 +45,9 @@
 </form>
 
 <Fab href="/expense/create">Nytt<br />Utlägg</Fab>
+
+<style lang="scss">
+	small {
+		font-size: 0.5em;
+	}
+</style>

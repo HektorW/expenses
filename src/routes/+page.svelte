@@ -1,10 +1,9 @@
 <script lang="ts">
 	import Fab from '$lib/components/Fab.svelte'
-	import ExpenseTotal from '$lib/components/ExpenseTotal.svelte'
+
+	import ExpenseList from '$lib/components/ExpenseList.svelte'
 	import Money from '$lib/components/Money.svelte'
 	import PersonIcon from '$lib/components/PersonIcon.svelte'
-	import { getExpenseTitle } from '$lib/utils/expenseUtils'
-	import { getPerson } from '$lib/utils/personUtils'
 	import { getPersonStanding } from '$lib/utils/tbdUtils'
 	import type { PageData } from './$types'
 
@@ -28,31 +27,13 @@
 	</ul>
 </section>
 
-<section>
-	<h2>Alla utlägg</h2>
+<ExpenseList expenses={data.expenses} persons={data.persons}>
+	<h2 slot="title">Alla utlägg</h2>
 
-	{#if data.expenses.length > 0}
-		<ul>
-			{#each data.expenses as expense}
-				{@const person = getPerson(data.persons, expense.byPersonId)}
-
-				{#if person}
-					<li>
-						<PersonIcon {person} />
-
-						<a href={`/expense/${expense.id}`}>
-							{getExpenseTitle(expense)}: <b><ExpenseTotal {expense} /></b>
-						</a>
-					</li>
-				{/if}
-			{/each}
-		</ul>
-	{:else}
-		<p>
-			<b>Ingenting här än</b>
-		</p>
-	{/if}
-</section>
+	<p slot="no-expenses">
+		<b>Ingenting här än</b>
+	</p>
+</ExpenseList>
 
 <Fab href="/expense/create">Nytt<br />Utlägg</Fab>
 

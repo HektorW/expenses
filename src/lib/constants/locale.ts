@@ -1,1 +1,1 @@
-export const locale = 'en-SE'
+export const locale = 'sv-SE'
