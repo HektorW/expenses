@@ -120,3 +120,64 @@ function generateClientId() {
 	return `${Date.now()}-${randomStr}`
 }
 ```
+
+## Synch state
+
+### Add
+
+- Assign client id
+- Add locally
+- Post to server
+  -> On success -> Combine with local
+  -> On fail -> Mark as failed synch -> Store error message
+
+### Edit
+
+TBD
+
+### Delete
+
+- If not synched
+  - Delete locally
+- If synched
+  - Mark in local deleted list
+  - Post to server
+    -> On success -> Delete locally
+    -> On fail -> Mark in delete list as failed synch -> Store error message
+
+### Synchronize
+
+- Fetch latest server state
+- Merge with local state
+- Post all none synched
+
+#### Merge with local state
+
+```ts
+const latestServerState = await fetch('/state')
+const clientState = getFromSomewhere()
+
+const mergedState = latestServerState.map((serverEntity) => {
+	if (hasClientEntity(serverEntity)) {
+		return mergeEntity(serverEntity, getClientEntity(serverEntity))
+	}
+
+	return createClientEntity(serverEntity)
+})
+
+clientState.forEach((clientEntity) => {
+	if (!mergedState.includes(clientEntity)) {
+		mergedState.push(clientEntity)
+	}
+})
+
+mergedState.sort()
+
+$appState = derived($)
+```
+
+#### Post all none synched
+
+```ts
+
+```

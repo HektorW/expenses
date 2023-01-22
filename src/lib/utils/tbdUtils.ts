@@ -1,4 +1,4 @@
-import type { ExpenseWithItems, PersonId } from '$lib/types/app.types'
+import type { ClientExpense, PersonId } from '$lib/types/app.types'
 import { getExpenseTotal } from './expenseUtils'
 
 export function generateClientId() {
@@ -11,7 +11,7 @@ export function isPresent<T>(item: T | null | undefined): item is T {
 }
 
 export function getPersonStanding(
-	expenses: ExpenseWithItems[],
+	expenses: Pick<ClientExpense, 'byPersonId' | 'expenseItems'>[],
 	// payments:
 	personId: PersonId
 ) {

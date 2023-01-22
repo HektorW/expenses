@@ -1,20 +1,20 @@
-import { writable } from 'svelte/store'
-import type { PersonId } from '../types/app.types'
-import { getParsedLocalStorageState, saveStateToLocalStorage } from './appStore.utils'
+import { localStorageWritable } from '$lib/utils/storeUtils'
+
+import type { AppSynchStatus, PersonId } from '../types/app.types'
 
 type AppStoreState = {
 	lastExpensePersonId?: PersonId | null
 	lastPaymentPersonId?: PersonId | null
+
+	synchStatus: AppSynchStatus
 }
 
 const localStorageKey = 'app'
 const defaultState: AppStoreState = {
 	lastExpensePersonId: null,
-	lastPaymentPersonId: null
+	lastPaymentPersonId: null,
+
+	synchStatus: 'offline'
 }
 
-export const appStore = writable(getParsedLocalStorageState(localStorageKey, defaultState))
-
-appStore.subscribe((state) => {
-	saveStateToLocalStorage(localStorageKey, state)
-})
+export const appStore = localStorageWritable(localStorageKey, defaultState)

@@ -10,8 +10,13 @@ export type PaymentClientId = DBPayment['clientId']
 export type DateString = string
 export type ImageBase64 = string
 export type ColorString = string
+/** From `serializeFormData` */
+export type SerializedFormData = string
 
-export type SynchStatus = null | 'in-progress' | 'failed'
+export type SynchStatus = 'synched' | 'unsynched' | 'synching'
+export type SynchFailMessage = { dateStr: string; message: string }
+
+export type AppSynchStatus = SynchStatus | 'offline'
 
 //
 // Person
@@ -31,16 +36,34 @@ export type ExpenseClientId = DBExpense['clientId']
 export type Expense = DBExpense
 export type ExpenseWithItems = Expense & { expenseItems: ExpenseItem[] }
 
+export type ClientExpense = Omit<Expense, 'id'> & {
+	expenseItems: (NewExpenseItem | ExpenseItem)[]
+	id?: ExpenseId
+	serializedFormData?: SerializedFormData
+	synchStatus: SynchStatus
+	synchFailMessages: SynchFailMessage[]
+}
+
+export type JsonClientExpense = Omit<ClientExpense, 'date'> & {
+	date: DateString
+}
+
+export type ApiExpense = Omit<ExpenseWithItems, 'date'> & {
+	date: DateString
+}
+
 export type NewExpense = Pick<
-	DBExpense,
-	| 'clientId'
-	| 'byPersonId'
-	| 'calculation'
-	| 'currency'
-	| 'date'
-	| 'imageBase64'
-	| 'title'
->
+	ExpenseWithItems,
+	'clientId' | 'byPersonId' | 'title'
+> & {
+	dateStr: DateString
+	expenseItems: NewExpenseItem[]
+}
+
+export type DeletedExpense = {
+	id: ExpenseId
+	dateStr: DateString
+}
 
 //
 // ExpenseItem
@@ -57,7 +80,7 @@ export type NewExpenseItem = Pick<
 	clientId: string
 }
 
-export type PartialNewExpenseItem = Pick<NewExpense, 'clientId'> &
+export type PartialNewExpenseItem = Pick<NewExpenseItem, 'clientId'> &
 	Partial<Omit<NewExpenseItem, 'clientId'>>
 
 //

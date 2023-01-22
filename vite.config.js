@@ -10,13 +10,9 @@ const config = {
 	plugins: [
 		sveltekit(),
 		SvelteKitPWA({
-			injectRegister: false,
-			devOptions: {
-				enabled: false,
-				type: 'module'
-			},
-			scope: '/',
-			strategies: 'generateSW',
+			// injectRegister: false,
+			// scope: '/',
+			// strategies: 'generateSW',
 			manifest: {
 				name: 'Westrup Wallin - Pengar',
 				short_name: 'Pengar',

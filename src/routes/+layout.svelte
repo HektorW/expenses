@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SynchStatus from '$lib/components/SynchStatus.svelte'
 	import { pwaInfo } from 'virtual:pwa-info'
 	import { registerSW } from 'virtual:pwa-register'
 
@@ -28,14 +29,22 @@
 	<slot />
 </main>
 
+<SynchStatus />
+
 <style lang="scss">
 	:root {
 		--color--background: #fff2de;
 		--color--text: #424242;
 		--color--primary: #ffc1a0;
 		--color--secondary: #b5d3e3;
+
 		--color--focus: var(--color--primary);
 		--color--selected: var(--color--text);
+
+		--color--border: var(--color--text);
+
+		--color--success: green;
+		--color--fail: red;
 	}
 
 	:global(html) {
@@ -52,6 +61,9 @@
 
 	:global(:focus-visible) {
 		outline-color: var(--color--focus);
+		outline-offset: 2px;
+		outline-width: 2px;
+		transition: outline-offset 100ms;
 	}
 
 	:global(body) {

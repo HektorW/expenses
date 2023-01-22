@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms'
 	import EditExpenseItem from '$lib/components/EditExpenseItem.svelte'
 	import PersonPicker from '$lib/components/PersonPicker.svelte'
 	import { appStore } from '$lib/stores/appStore'
@@ -10,28 +9,29 @@
 		generateExpenseClientId,
 		getExpenseTotal
 	} from '$lib/utils/expenseUtils'
-	import type { PageData } from './$types'
 	import {
 		fcnByPersonId,
 		fcnDate,
 		fcnImage,
 		fcnClientId,
 		fcnTitle
-	} from '../../../lib/utils/formControlNames'
+	} from '$lib/utils/formControlNames'
 	import RouteTitle from '$lib/components/RouteTitle.svelte'
 	import Money from '$lib/components/Money.svelte'
-
-	export let data: PageData
+	import type { WithTarget } from '$lib/types/utils.types'
+	import { addExpense } from '$lib/api/synchronize'
+	import { goto } from '$app/navigation'
+	import { persons } from '$lib/stores/personsStore'
 
 	const clientId = generateExpenseClientId()
 
 	let date = getHtmlDateString(new Date())
 	let byPersonId = getInitialByPersonId()
 
-	let expenses: PartialNewExpenseItem[] = [createNewExpenseItem(data.persons)]
+	let expenseItems: PartialNewExpenseItem[] = [createNewExpenseItem($persons)]
 
 	$: total = getExpenseTotal({
-		expenseItems: expenses
+		expenseItems: expenseItems
 	})
 
 	function getInitialByPersonId() {
@@ -44,13 +44,18 @@
 			return window.history.state.byPersonId
 		}
 
-		return $appStore.lastExpensePersonId ?? data.persons[0]?.id
+		return $appStore.lastExpensePersonId ?? $persons[0]?.id
 	}
 
 	function addPreviewExpenseItem() {
-		expenses.push(createNewExpenseItem(data.persons, expenses))
+		expenseItems.push(createNewExpenseItem($persons, expenseItems))
+		expenseItems = expenseItems
+	}
 
-		expenses = expenses
+	function handleSubmit(event: WithTarget<HTMLFormElement>) {
+		const formData = new FormData(event.currentTarget)
+		addExpense(formData)
+		goto('/')
 	}
 </script>
 
@@ -60,7 +65,7 @@
 
 <h1>Nytt utlägg</h1>
 
-<form method="post" autocomplete="off" use:enhance>
+<form method="post" autocomplete="off" on:submit|preventDefault={handleSubmit}>
 	<input name={fcnClientId} type="hidden" value={clientId} />
 
 	<label class="title">
@@ -76,7 +81,7 @@
 	<PersonPicker
 		title="Betalat av"
 		name={fcnByPersonId}
-		persons={data.persons}
+		persons={$persons}
 		bind:group={byPersonId}
 	/>
 
@@ -86,15 +91,15 @@
 			<span>Pris</span>
 		</h2>
 
-		{#each expenses as expenseItem, index}
-			{@const isPreview = index > 0 && index === expenses.length - 1}
+		{#each expenseItems as expenseItem, index}
+			{@const isPreview = index > 0 && index === expenseItems.length - 1}
 			{@const shouldCreateNewPreviewOnInteraction =
-				isPreview || (index === 0 && expenses.length === 1)}
+				isPreview || (index === 0 && expenseItems.length === 1)}
 
 			<EditExpenseItem
 				bind:expenseItem
 				{isPreview}
-				persons={data.persons}
+				persons={$persons}
 				on:interaction={shouldCreateNewPreviewOnInteraction
 					? addPreviewExpenseItem
 					: undefined}

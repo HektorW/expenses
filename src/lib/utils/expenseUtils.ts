@@ -1,12 +1,9 @@
 import type {
-	Expense,
+	ClientExpense,
 	ExpenseClientId,
-	ExpenseWithItems,
 	PartialNewExpenseItem,
-	Person,
-	PersonId
+	Person
 } from '../types/app.types'
-import { getDateString } from './dateUtils'
 import { generateClientId } from './tbdUtils'
 
 export function generateExpenseClientId(): ExpenseClientId {
@@ -33,23 +30,10 @@ export function getExpenseTotal(expense: {
 	)
 }
 
-export function getExpenseTitle(expense: ExpenseWithItems) {
+export function getExpenseTitle(
+	expense: Pick<ClientExpense, 'title' | 'expenseItems'>
+) {
 	return (
 		expense.title || expense.expenseItems.map((item) => item.title).join(', ')
 	)
-}
-
-export function createNewExpense(byPerson: PersonId): Expense {
-	return {
-		clientId: generateClientId(),
-		serverId: null,
-		synchStatus: null,
-		expenseItems: [],
-		title: '',
-		currency: 'SEK',
-		date: getDateString(new Date()),
-		image: null,
-		byPerson,
-		forPersons: []
-	}
 }

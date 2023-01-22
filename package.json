@@ -35,6 +35,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@prisma/client": "^4.8.0"
+		"@prisma/client": "^4.8.0",
+		"axios": "^1.2.3"
 	}
 }

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { ExpenseWithItems } from '$lib/types/app.types'
+	import type { ClientExpense } from '$lib/types/app.types'
 	import { getExpenseTotal } from '$lib/utils/expenseUtils'
 	import Money from './Money.svelte'
 
-	export let expense: ExpenseWithItems
+	export let expense: Pick<ClientExpense, 'expenseItems'>
 </script>
 
 <Money amount={getExpenseTotal(expense)} />
