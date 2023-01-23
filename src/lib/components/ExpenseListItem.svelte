@@ -26,12 +26,19 @@
 
 <style lang="scss">
 	li {
+		--size-person: auto;
+		--size-title: 1fr;
+		--size-price: auto;
+		--size-date: 4.5rem;
+
+		--template-columns: var(--size-title) var(--size-price);
+
 		align-items: baseline;
 		display: grid;
-		grid-template-columns: 3fr 1fr 4rem;
+		grid-template-columns: var(--template-columns);
 
 		&.withPerson {
-			grid-template-columns: auto 3fr 1fr 4rem;
+			--template-columns: var(--size-person) var(--size-title) var(--size-price);
 
 			a {
 				padding-inline-start: 0.5em;
@@ -44,7 +51,6 @@
 	}
 
 	a {
-		grid-column: -4 / span 2;
 		overflow: hidden;
 		padding-inline-end: 0.5em;
 		text-overflow: ellipsis;
@@ -56,23 +62,19 @@
 		text-align: right;
 	}
 
-	b {
-		grid-column: -2;
-	}
-
 	small {
 		display: none;
 		font-size: 0.5em;
-		grid-column: -2;
 	}
 
 	@media screen and (min-width: 25em) {
-		a {
-			grid-column: -4 / span 1;
-		}
+		li {
+			--template-columns: var(--size-title) var(--size-price) var(--size-date);
 
-		b {
-			grid-column: -3;
+			&.withPerson {
+				--template-columns: var(--size-person) var(--size-title)
+					var(--size-price) var(--size-date);
+			}
 		}
 
 		small {
